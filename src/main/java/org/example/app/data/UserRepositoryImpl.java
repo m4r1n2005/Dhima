@@ -14,7 +14,7 @@ public class UserRepositoryImpl implements UserRepository{
     private static UserRepository instance;
 
 
-    private UserRepositoryImpl(){
+    public UserRepositoryImpl(){
         users = new HashMap<>();
     }
 

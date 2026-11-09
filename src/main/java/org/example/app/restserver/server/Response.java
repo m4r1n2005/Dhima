@@ -1,8 +1,8 @@
-package org.example.restserver.server;
+package org.example.app.restserver.server;
 
 import com.sun.net.httpserver.HttpExchange;
-import org.example.restserver.http.ContentType;
-import org.example.restserver.http.HttpStatus;
+import org.example.app.restserver.http.ContentType;
+import org.example.app.restserver.http.HttpStatus;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -24,12 +24,12 @@ public class Response {
 
 
     public void send(HttpExchange exchange) throws IOException {
-        byte[] bodyBytes = (body == null) ? new Byte[0] : body.getBytes(StandardCharsets.UTF_8);
+        byte[] bodyBytes = (body == null) ? new byte[0] : body.getBytes(StandardCharsets.UTF_8);
 
 
         exchange.getResponseHeaders().set(
                 "Content-Type",
-                contentType.getValue();
+                contentType.getValue()
         );
 
 

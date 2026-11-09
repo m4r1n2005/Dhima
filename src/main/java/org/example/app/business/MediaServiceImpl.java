@@ -1,7 +1,9 @@
 package org.example.app.business;
 
+import org.example.app.data.FavoritesRepository;
 import org.example.app.data.MediaRepository;
 import org.example.app.domain.Media;
+import org.example.app.domain.MediaNotFoundException;
 
 import java.util.List;
 
@@ -10,16 +12,18 @@ public class MediaServiceImpl implements MediaService{
 
     private final MediaRepository mediaRepository;
 
+    private final FavoritesRepository favoritesRepository;
 
     private static MediaService instance;
 
-    private MediaServiceImpl(MediaRepository mediaRepository){
+    private MediaServiceImpl(MediaRepository mediaRepository, FavoritesRepository favoritesRepository){
         this.mediaRepository = mediaRepository;
+        this.favoritesRepository = favoritesRepository;
     }
 
-    public static MediaService getInstance(MediaRepository mediaRepository){
+    public static MediaService getInstance(MediaRepository mediaRepository, FavoritesRepository favoritesRepository){
         if(instance == null){
-            instance = new MediaServiceImpl(mediaRepository);
+            instance = new MediaServiceImpl(mediaRepository, favoritesRepository);
         }
 
         return instance;
@@ -55,15 +59,17 @@ public class MediaServiceImpl implements MediaService{
 
 
     @Override
-    public boolean deleteMedia(int mediaId){
-        Media exists = mediaRepository.findById(mediaId);
+    public void deleteMedia(int mediaId) throws MediaNotFoundException {
+        Media media = mediaRepository.findById(mediaId);
 
-        if(exists != null){
-            mediaRepository.delete(mediaId);
-            return true;
+        if (media == null) {
+            throw new MediaNotFoundException("Media not found");
         }
 
-        return false;
+        // Keep your existing authorization checks here.
+
+        mediaRepository.delete(mediaId);
+        favoritesRepository.removeFavoritesByMediaId(mediaId);
     }
 
 

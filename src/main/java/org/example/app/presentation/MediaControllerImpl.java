@@ -2,6 +2,7 @@ package org.example.app.presentation;
 
 import org.example.app.business.MediaService;
 import org.example.app.domain.Media;
+import org.example.app.domain.MediaNotFoundException;
 
 import java.util.List;
 
@@ -44,8 +45,8 @@ public class MediaControllerImpl implements MediaController {
 
 
     @Override
-    public boolean deleteMedia(int mediaId){
-        return mediaService.deleteMedia(mediaId);
+    public void deleteMedia(int mediaId) throws MediaNotFoundException {
+        mediaService.deleteMedia(mediaId);
     }
 
 

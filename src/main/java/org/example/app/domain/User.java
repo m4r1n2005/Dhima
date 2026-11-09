@@ -16,6 +16,10 @@ public class User {
         this.favoriteGenre = favoriteGenre;
     }
 
+    public User(){
+
+    }
+
 
     //getters
 

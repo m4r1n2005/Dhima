@@ -1,4 +1,4 @@
-package org.example.restserver.http;
+package org.example.app.restserver.http;
 
 public enum HttpStatus {
     OK(200),

@@ -1,6 +1,7 @@
 package org.example.app.presentation;
 
 import org.example.app.domain.Media;
+import org.example.app.domain.MediaNotFoundException;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ public interface MediaController {
 
     boolean updateMedia(Media media);
 
-    boolean deleteMedia(int mediaId);
+    void deleteMedia(int mediaId) throws MediaNotFoundException;
 
     List<Media> getAllMedia();
 

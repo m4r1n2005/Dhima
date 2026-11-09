@@ -1,8 +1,8 @@
-package org.example.restserver.server;
+package org.example.app.restserver.server;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
-import org.example.restserver.http.Method;
+import org.example.app.restserver.http.Method;
 
 import java.io.IOException;
 import java.net.URI;
