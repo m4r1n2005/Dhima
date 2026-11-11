@@ -48,9 +48,6 @@ public class UserHandler implements HttpHandler {
         Request request = new Request(exchange);
 
 
-        String address = exchange.getRemoteAddress().getAddress().getHostAddress();
-        System.out.println("Connected with: " + address);
-        System.out.println("Path: " + request.getPathParts());
 
         switch (request.getMethod()){
             case POST:
