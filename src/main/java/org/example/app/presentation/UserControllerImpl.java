@@ -30,8 +30,8 @@ public class UserControllerImpl implements UserController{
 
 
     @Override
-    public boolean register(User user){
-        return userService.register(user);
+    public boolean register(String username, String password) {
+        return userService.register(username, password);
     }
 
 

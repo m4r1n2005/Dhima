@@ -20,19 +20,23 @@ public class UserServiceImpl implements UserService{
     private final RatingRepository ratingRepository;
 
 
+    private final AuthService authService;
+
+
 
     private static UserService instance;
 
-    private UserServiceImpl(UserRepository userRepository, MediaRepository mediaRepository, RatingRepository ratingRepository){
+    private UserServiceImpl(UserRepository userRepository, MediaRepository mediaRepository, RatingRepository ratingRepository, AuthService authService){
         loggedInUsers = new ArrayList<>();
         this.userRepository = userRepository;
         this.mediaRepository = mediaRepository;
         this.ratingRepository = ratingRepository;
+        this.authService = authService;
     }
 
-    public static UserService getInstance(UserRepository userRepository, MediaRepository mediaRepository, RatingRepository ratingRepository){
+    public static UserService getInstance(UserRepository userRepository, MediaRepository mediaRepository, RatingRepository ratingRepository, AuthService authService){
         if(instance == null){
-            instance = new UserServiceImpl(userRepository, mediaRepository, ratingRepository);
+            instance = new UserServiceImpl(userRepository, mediaRepository, ratingRepository, authService);
         }
 
         return instance;
@@ -41,15 +45,26 @@ public class UserServiceImpl implements UserService{
 
 
     @Override
-    public boolean register(User user){
-        User searchedUser = userRepository.findByUsername(user.getUsername());
+    public boolean register(String username, String password) {
 
-        if(searchedUser == null){
-            userRepository.save(user);
-            return true;
-        } else{
+        if (username == null || username.isBlank()
+                || password == null || password.isBlank()) {
+            throw new IllegalArgumentException("Invalid credentials");
+        }
+
+        User existing = userRepository.findByUsername(username);
+
+        if (existing != null) {
             return false;
         }
+
+        String hash = PasswordHasher.hashPassword(password);
+
+        User user = new User(0, username, hash, null, null);
+
+        userRepository.save(user);
+
+        return true;
     }
 
 
@@ -58,9 +73,8 @@ public class UserServiceImpl implements UserService{
         User searchedByUsername = userRepository.findByUsername(username);
 
         if(searchedByUsername != null){
-            boolean found = searchedByUsername.getPassword().equals(password);
+            boolean found = PasswordHasher.verifyPassword(password, searchedByUsername.getPasswordHash());
             if(found){
-                AuthService authService = AuthServiceImpl.getInstance();
                 return authService.generateToken(searchedByUsername.getUserId());
             }
         }

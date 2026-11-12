@@ -3,6 +3,7 @@ package org.example.app.restserver.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import org.example.app.business.AuthService;
 import org.example.app.domain.*;
 import org.example.app.presentation.FavoritesController;
 import org.example.app.presentation.UserController;
@@ -26,21 +27,44 @@ public class UserHandler implements HttpHandler {
     private final FavoritesController favoritesController;
 
 
+    private final AuthService authService;
+
+
     private static HttpHandler instance;
 
 
-    private UserHandler(UserController userController, FavoritesController favoritesController){
+    private UserHandler(UserController userController, FavoritesController favoritesController, AuthService authService) {
         this.userController = userController;
         this.favoritesController = favoritesController;
+        this.authService = authService;
     }
 
 
-    public static HttpHandler getInstance(UserController userController, FavoritesController favoritesController){
+    public static HttpHandler getInstance(UserController userController, FavoritesController favoritesController, AuthService authService){
         if(instance == null){
-            instance = new UserHandler(userController, favoritesController);
+            instance = new UserHandler(userController, favoritesController, authService);
         }
 
         return instance;
+    }
+
+
+    private Integer getAuthenticatedUserId(Request request) {
+
+        String authorization = request.getHeader("Authorization");
+
+        if (authorization == null ||
+                !authorization.startsWith("Bearer ")) {
+            return null;
+        }
+
+        String token = authorization.substring(7).trim();
+
+        if (token.isEmpty()) {
+            return null;
+        }
+
+        return authService.validateToken(token);
     }
 
     @Override
@@ -56,9 +80,9 @@ public class UserHandler implements HttpHandler {
                     ObjectMapper mapper = new ObjectMapper();
 
 
-                    User user = mapper.readValue(request.getBody(), User.class);
+                    LoginRequest credentials = mapper.readValue(request.getBody(), LoginRequest.class);
 
-                    boolean registered = userController.register(user);
+                    boolean registered = userController.register(credentials.getUsername(), credentials.getPassword());
 
                     if(registered){
                         Response response = new Response(HttpStatus.CREATED, ContentType.JSON, null);

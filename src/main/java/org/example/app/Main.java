@@ -20,23 +20,6 @@ public class Main{
 
 
     public static void main(String[] args) throws IOException {
-        try (UnitOfWork uow = new UnitOfWork()) {
-
-            try (PreparedStatement stmt = uow.prepareStatement("SELECT COUNT(*) FROM users")) {
-
-                try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        System.out.println("Users in database: " + rs.getInt(1));
-                    }
-                }
-            }
-
-            uow.commitTransaction();
-
-            System.out.println("Database test successful!");
-        } catch (SQLException e) {
-            throw new DataAccessException("Database test failed", e);
-        }
 
         ApplicationConfig appConfig = new ApplicationConfig();
         Server server = new Server(appConfig, 5000);

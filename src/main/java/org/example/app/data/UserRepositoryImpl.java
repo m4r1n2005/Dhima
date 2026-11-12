@@ -16,7 +16,7 @@ public class UserRepositoryImpl implements UserRepository{
     private static UserRepository instance;
 
 
-    public UserRepositoryImpl(){
+    private UserRepositoryImpl(){
 
     }
 
@@ -59,7 +59,7 @@ public class UserRepositoryImpl implements UserRepository{
             if (isNew) {
 
                 stmt.setString(1, user.getUsername());
-                stmt.setString(2, user.getPassword());
+                stmt.setString(2, user.getPasswordHash());
                 stmt.setString(3, user.getEmail());
                 stmt.setString(4, user.getFavoriteGenre());
 
@@ -99,7 +99,41 @@ public class UserRepositoryImpl implements UserRepository{
 
     @Override
     public User findById(int userId){
-        return users.get(userId);
+
+        String sql = """
+                SELECT user_id, username, password_hash, email, favorite_genre
+                FROM users
+                WHERE user_id = ?
+                """;
+
+
+        try (UnitOfWork uow = new UnitOfWork();
+        PreparedStatement stmt = uow.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+
+
+            User user = null;
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if(rs.next()){
+                    user = new User(
+                            rs.getInt("user_id"),
+                            rs.getString("username"),
+                            rs.getString("password_hash"),
+                            rs.getString("email"),
+                            rs.getString("favorite_genre")
+                    );
+                }
+            }
+
+
+            return user;
+
+
+        } catch(SQLException e){
+            throw new DataAccessException("Failed to find user", e);
+        }
     }
 
 
@@ -133,7 +167,6 @@ public class UserRepositoryImpl implements UserRepository{
                 }
             }
 
-            uow.commitTransaction();
 
             return user;
 
@@ -147,13 +180,37 @@ public class UserRepositoryImpl implements UserRepository{
 
     @Override
     public User findByEmail(String email){
-        for(User user : users.values()){
-            if(user.getEmail().equals(email)){
-                return user;
-            }
-        }
 
-        return null;
+        String sql = """
+                SELECT user_id, username, password_hash, email, favorite_genre
+                FROM users
+                WHERE email = ? 
+                """;
+
+        try (UnitOfWork uow = new UnitOfWork();
+        PreparedStatement stmt = uow.prepareStatement(sql)) {
+
+            stmt.setString(1, email);
+
+            User user = null;
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if(rs.next()){
+                    user = new User(
+                            rs.getInt("user_id"),
+                            rs.getString("username"),
+                            rs.getString("password_hash"),
+                            rs.getString("email"),
+                            rs.getString("favorite_genre")
+                    );
+                }
+            }
+
+            return user;
+
+        } catch (SQLException e){
+            throw new DataAccessException("Failed to find user", e);
+        }
     }
 
 
@@ -161,7 +218,33 @@ public class UserRepositoryImpl implements UserRepository{
 
     @Override
     public List<User> findAll(){
-        return new ArrayList<>(users.values());
+        String sql = """
+                SELECT user_id, username, password_hash, email, favorite_genre
+                FROM users
+                """;
+         try (UnitOfWork uow = new UnitOfWork();
+         PreparedStatement stmt = uow.prepareStatement(sql)) {
+
+             List<User> userList = new ArrayList<>();
+
+             try(ResultSet rs = stmt.executeQuery()) {
+                 while(rs.next()){
+                     User user = new User(
+                             rs.getInt("user_id"),
+                             rs.getString("username"),
+                             rs.getString("password_hash"),
+                             rs.getString("email"),
+                             rs.getString("favorite_genre")
+                     );
+                     userList.add(user);
+                 }
+             }
+
+             return userList;
+
+         } catch (SQLException e){
+             throw new DataAccessException("Failed to find all users", e);
+         }
     }
 
 

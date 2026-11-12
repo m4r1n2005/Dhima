@@ -7,7 +7,7 @@ import java.util.List;
 public interface UserController {
 
 
-    boolean register(User user);
+    boolean register(String username, String password);
 
 
     String login(String username, String password) throws InvalidCredentialsException;

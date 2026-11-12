@@ -4,14 +4,14 @@ public class User {
 
     private int userId;
     private String username;
-    private String password;
+    private String password_hash;
     private String email;
     private String favoriteGenre;
 
-    public User(int userId, String username, String password, String email, String favoriteGenre){
+    public User(int userId, String username, String password_hash, String email, String favoriteGenre){
         this.userId = userId;
         this.username = username;
-        this.password = password;
+        this.password_hash = password_hash;
         this.email = email;
         this.favoriteGenre = favoriteGenre;
     }
@@ -27,7 +27,7 @@ public class User {
 
     public String getUsername(){ return username; }
 
-    public String getPassword(){ return password; }
+    public String getPasswordHash(){ return password_hash; }
 
     public String getEmail(){ return email; }
 
@@ -45,8 +45,8 @@ public class User {
         this.username = username;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPasswordHash(String password_hash) {
+        this.password_hash = password_hash;
     }
 
     public void setEmail(String email) {
@@ -75,7 +75,6 @@ public class User {
         return "User{" +
                 "userId=" + userId +
                 ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
                 ", favoriteGenre='" + favoriteGenre + '\'' +
                 '}';

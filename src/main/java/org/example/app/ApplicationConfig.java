@@ -19,6 +19,7 @@ public class ApplicationConfig {
     private final FavoritesRepository favoritesRepository;
 
     // Services
+    private final AuthService authService;
     private final UserService userService;
     private final MediaService mediaService;
     private final RatingService ratingService;
@@ -55,8 +56,9 @@ public class ApplicationConfig {
         favoritesRepository = FavoritesRepositoryImpl.getInstance();
 
         // Services
+        authService = AuthServiceImpl.getInstance();
 
-        userService = UserServiceImpl.getInstance(userRepository, mediaRepository, ratingRepository);
+        userService = UserServiceImpl.getInstance(userRepository, mediaRepository, ratingRepository, authService);
 
 
         mediaService = MediaServiceImpl.getInstance(mediaRepository, favoritesRepository);
@@ -84,7 +86,7 @@ public class ApplicationConfig {
 
 
         //Handlers
-        userHandler = UserHandler.getInstance(userController, favoritesController);
+        userHandler = UserHandler.getInstance(userController, favoritesController, authService);
 
     }
 
