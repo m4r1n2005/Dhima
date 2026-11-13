@@ -3,6 +3,7 @@ package org.example.app.restserver.server;
 import com.sun.net.httpserver.HttpServer;
 import org.example.app.ApplicationConfig;
 import org.example.app.presentation.UserControllerImpl;
+import org.example.app.restserver.handler.MediaHandler;
 import org.example.app.restserver.handler.UserHandler;
 
 import java.io.IOException;
@@ -19,7 +20,7 @@ public class Server {
         server.createContext("/api/users", appConfig.getUserHandler());
 
 
-        //server.createContext("/api/media", new MediaHandler());
+        server.createContext("/api/media", appConfig.getMediaHandler());
 
         //server.createContext("/api/ratings", new RatingHandler());
 

@@ -24,7 +24,6 @@ public class UserHandler implements HttpHandler {
 
     private final UserController userController;
 
-    private final FavoritesController favoritesController;
 
 
     private final AuthService authService;
@@ -33,16 +32,15 @@ public class UserHandler implements HttpHandler {
     private static HttpHandler instance;
 
 
-    private UserHandler(UserController userController, FavoritesController favoritesController, AuthService authService) {
+    private UserHandler(UserController userController, AuthService authService) {
         this.userController = userController;
-        this.favoritesController = favoritesController;
         this.authService = authService;
     }
 
 
-    public static HttpHandler getInstance(UserController userController, FavoritesController favoritesController, AuthService authService){
+    public static HttpHandler getInstance(UserController userController, AuthService authService){
         if(instance == null){
-            instance = new UserHandler(userController, favoritesController, authService);
+            instance = new UserHandler(userController, authService);
         }
 
         return instance;

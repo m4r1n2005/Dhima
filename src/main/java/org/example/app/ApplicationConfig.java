@@ -7,6 +7,7 @@ import org.example.app.presentation.*;
 //import org.example.app.restserver.handler.LeaderboardHandler;
 //import org.example.app.restserver.handler.MediaHandler;
 //import org.example.app.restserver.handler.RatingHandler;
+import org.example.app.restserver.handler.MediaHandler;
 import org.example.app.restserver.handler.UserHandler;
 
 import java.util.Map;
@@ -35,7 +36,7 @@ public class ApplicationConfig {
 
     // HTTP Handlers
     private final HttpHandler userHandler;
-    //private final HttpHandler mediaHandler;
+    private final HttpHandler mediaHandler;
     //private final HttpHandler ratingHandler;
     //private final HttpHandler leaderboardHandler;
 
@@ -86,7 +87,9 @@ public class ApplicationConfig {
 
 
         //Handlers
-        userHandler = UserHandler.getInstance(userController, favoritesController, authService);
+        userHandler = UserHandler.getInstance(userController, authService);
+
+        mediaHandler = MediaHandler.getInstance(mediaController, authService);
 
     }
 
@@ -94,4 +97,7 @@ public class ApplicationConfig {
     public HttpHandler getUserHandler() {
         return userHandler;
     }
+
+
+    public HttpHandler getMediaHandler() { return mediaHandler; }
 }
