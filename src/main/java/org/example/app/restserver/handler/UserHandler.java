@@ -10,13 +10,13 @@ import org.example.app.presentation.UserController;
 
 import org.example.app.presentation.dto.LoginRequest;
 import org.example.app.presentation.dto.UserProfileResponse;
+import org.example.app.presentation.dto.UserProfileUpdateRequest;
 import org.example.app.restserver.http.ContentType;
 import org.example.app.restserver.http.HttpStatus;
 import org.example.app.restserver.server.Request;
 import org.example.app.restserver.server.Response;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 public class UserHandler implements HttpHandler {
@@ -74,8 +74,8 @@ public class UserHandler implements HttpHandler {
 
 
         switch (request.getMethod()){
-            case POST:
-                if(request.getPath().equals("/api/users/register")){
+            case POST: {
+                if (request.getPath().equals("/api/users/register")) {
 
                     ObjectMapper mapper = new ObjectMapper();
 
@@ -84,17 +84,16 @@ public class UserHandler implements HttpHandler {
 
                     boolean registered = userController.register(credentials.getUsername(), credentials.getPassword());
 
-                    if(registered){
+                    if (registered) {
                         Response response = new Response(HttpStatus.CREATED, ContentType.JSON, null);
                         response.send(exchange);
-                    } else{
+                    } else {
                         Response badResponse = new Response(HttpStatus.CONFLICT, ContentType.JSON, "Username already exists");
                         badResponse.send(exchange);
                     }
 
 
-
-                } else if(request.getPath().equals("/api/users/login")){
+                } else if (request.getPath().equals("/api/users/login")) {
 
                     ObjectMapper mapper = new ObjectMapper();
 
@@ -108,101 +107,201 @@ public class UserHandler implements HttpHandler {
 
                         Response response = new Response(HttpStatus.OK, ContentType.JSON, json);
                         response.send(exchange);
-                    } catch(InvalidCredentialsException e){
+                    } catch (InvalidCredentialsException e) {
                         String json = "{\"error\":\"Invalid username or password\"}";
                         Response badResponse = new Response(HttpStatus.UNAUTHORIZED, ContentType.JSON, json);
                         System.out.println(e.getMessage());
                         badResponse.send(exchange);
                     }
 
-                } else{
+                } else {
                     Response badResponse = new Response(HttpStatus.NOT_FOUND, ContentType.JSON, "{\"error\":\"Endpoint not found\"}");
                     badResponse.send(exchange);
                 }
                 break;
+            }
 
-            case GET:
+            case GET: {
 
                 ObjectMapper mapper = new ObjectMapper();
-                ///winget install --id Docker.DockerDesktop -e
 
 
-                if(request.getPathParts().size() != 4){
-                    new Response(HttpStatus.NOT_FOUND, ContentType.JSON, "{\"error\":\"Invalid endpoint\"}").send(exchange);
+                if (request.getPathParts().size() != 4 ||
+                        !request.getPathParts().get(0).equals("api") ||
+                        !request.getPathParts().get(1).equals("users")) {
+
+                    new Response(
+                            HttpStatus.NOT_FOUND,
+                            ContentType.JSON,
+                            "{\"error\":\"Invalid endpoint\"}"
+                    ).send(exchange);
+
                     break;
                 }
 
+
                 String lastPathPart = request.getPathParts().getLast();
+
+                if (!lastPathPart.equals("profile")) {
+                    new Response(
+                            HttpStatus.NOT_FOUND,
+                            ContentType.JSON,
+                            "{\"error\":\"Endpoint not found\"}"
+                    ).send(exchange);
+                    break;
+                }
 
                 int userId;
 
                 User user = null;
 
-                try{
+                try {
+
+                    Integer authenticatedUserId = getAuthenticatedUserId(request);
+
+                    if (authenticatedUserId == null) {
+                        new Response(
+                                HttpStatus.UNAUTHORIZED,
+                                ContentType.JSON,
+                                "{\"error\":\"Invalid or missing token\"}"
+                        ).send(exchange);
+
+                        break;
+                    }
+
                     userId = Integer.parseInt(request.getPathParts().get(2));
 
+                    if (authenticatedUserId != userId) {
+                        new Response(HttpStatus.FORBIDDEN, ContentType.JSON, "{\"error\":\"Access denied\"}"
+                        ).send(exchange);
+                        break;
+                    }
+
                     user = userController.getProfile(userId);
-                } catch(UserNotFoundException e){
+                } catch (UserNotFoundException e) {
                     Response badResponse = new Response(HttpStatus.NOT_FOUND, ContentType.JSON, "{\"error\":\"User not found\"}");
                     System.out.println(e.getMessage());
                     badResponse.send(exchange);
                     break;
-                } catch(NumberFormatException e){
+                } catch (NumberFormatException e) {
                     new Response(HttpStatus.BAD_REQUEST, ContentType.JSON, "{\"error\":\"Invalid user ID\"}").send(exchange);
                     break;
                 }
 
-                if(lastPathPart.equals("profile")){
 
-                    UserProfileResponse userProfile = new UserProfileResponse(user.getUserId(), user.getUsername(), user.getEmail(), user.getFavoriteGenre());
+                UserProfileResponse userProfile = new UserProfileResponse(user.getUserId(), user.getUsername(), user.getEmail(), user.getFavoriteGenre());
 
-                    String json = mapper.writeValueAsString(userProfile);
+                String json = mapper.writeValueAsString(userProfile);
 
-                    Response response = new Response(HttpStatus.OK, ContentType.JSON, json);
+                Response response = new Response(HttpStatus.OK, ContentType.JSON, json);
 
-                    response.send(exchange);
+                response.send(exchange);
 
-                } else if(lastPathPart.equals("ratings")){
-                    List<Rating> ratings = userController.getRatings(userId);
+                break;
+            }
 
-                    String json = mapper.writeValueAsString(ratings);
+            case PUT: {
+                if (request.getPathParts().size() != 4 ||
+                        !request.getPathParts().get(0).equals("api") ||
+                        !request.getPathParts().get(1).equals("users")) {
 
-                    Response response = new Response(HttpStatus.OK, ContentType.JSON, json);
-                    response.send(exchange);
+                    new Response(
+                            HttpStatus.NOT_FOUND,
+                            ContentType.JSON,
+                            "{\"error\":\"Invalid endpoint\"}"
+                    ).send(exchange);
 
-                } else if(lastPathPart.equals("favorites")){
-                    List<Media> list = favoritesController.getFavoritesByUser(userId);
-
-                    String json = mapper.writeValueAsString(list);
+                    break;
+                }
 
 
-                    Response response = new Response(HttpStatus.OK, ContentType.JSON, json);
-                    response.send(exchange);
+                String lastPathPart = request.getPathParts().getLast();
 
-                } else if(lastPathPart.equals("recommendations")){
-                    String type = request.getQueryParameters().get("type");
+                if (!lastPathPart.equals("profile")) {
+                    new Response(
+                            HttpStatus.NOT_FOUND,
+                            ContentType.JSON,
+                            "{\"error\":\"Endpoint not found\"}"
+                    ).send(exchange);
+                    break;
+                }
 
-                    if(type == null || (!type.equals("genre") && !type.equals("content"))){
-                        Response badResponse = new Response(HttpStatus.BAD_REQUEST, ContentType.JSON, "{\"error\":\"Empty or non existing reccomendation type\"}");
-                        badResponse.send(exchange);
+                int userId;
+
+                User user = null;
+
+
+                try {
+
+                    Integer authenticatedUserId = getAuthenticatedUserId(request);
+
+                    if (authenticatedUserId == null) {
+                        new Response(
+                                HttpStatus.UNAUTHORIZED,
+                                ContentType.JSON,
+                                "{\"error\":\"Invalid or missing token\"}"
+                        ).send(exchange);
+
                         break;
                     }
 
-                    List<Media> recommendations = userController.getRecommendations(userId, type);
+                    userId = Integer.parseInt(request.getPathParts().get(2));
 
-                    String json = mapper.writeValueAsString(recommendations);
+                    if (authenticatedUserId != userId) {
+                        new Response(HttpStatus.FORBIDDEN, ContentType.JSON, "{\"error\":\"Access denied\"}"
+                        ).send(exchange);
+                        break;
+                    }
 
-                    Response response = new Response(HttpStatus.OK, ContentType.JSON, json);
-                    response.send(exchange);
-                } else{
-                    Response badResponse = new Response(HttpStatus.NOT_FOUND, ContentType.JSON, "{\"error\":\"Endpoint not found\"}");
+                    user = userController.getProfile(userId);
+                } catch (UserNotFoundException e) {
+                    Response badResponse = new Response(HttpStatus.NOT_FOUND, ContentType.JSON, "{\"error\":\"User not found\"}");
+                    System.out.println(e.getMessage());
                     badResponse.send(exchange);
+                    break;
+                } catch (NumberFormatException e) {
+                    new Response(HttpStatus.BAD_REQUEST, ContentType.JSON, "{\"error\":\"Invalid user ID\"}").send(exchange);
+                    break;
                 }
-                break;
 
-            default:
+                ObjectMapper mapper = new ObjectMapper();
+
+
+                UserProfileUpdateRequest userProfileUpdateRequest = mapper.readValue(request.getBody(), UserProfileUpdateRequest.class);
+
+                if (userProfileUpdateRequest.getEmail() != null) {
+                    user.setEmail(userProfileUpdateRequest.getEmail());
+                }
+
+                if (userProfileUpdateRequest.getFavoriteGenre() != null) {
+                    user.setFavoriteGenre(userProfileUpdateRequest.getFavoriteGenre());
+                }
+
+                userController.updateProfile(user);
+
+
+                UserProfileResponse userProfile = new UserProfileResponse(
+                        user.getUserId(),
+                        user.getUsername(),
+                        user.getEmail(),
+                        user.getFavoriteGenre()
+                );
+
+                String json = mapper.writeValueAsString(userProfile);
+
+                Response response = new Response(HttpStatus.OK, ContentType.JSON, json);
+
+                response.send(exchange);
+
+                break;
+            }
+
+
+
+            default: {
                 Response badResponse = new Response(HttpStatus.BAD_REQUEST, ContentType.JSON, "{\"error\":\"Invalid path\"}");
                 badResponse.send(exchange);
+            }
         }
 
     }

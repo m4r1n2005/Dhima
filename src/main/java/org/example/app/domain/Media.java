@@ -10,9 +10,10 @@ public abstract class Media {
     private int releaseYear;
     private List<String> genres;
     private int ageRestriction;
+    private final int creatorUserId;
 
 
-    public Media(int mediaId, String title, String description, String mediaType, int releaseYear, List<String> genres, int ageRestriction){
+    public Media(int mediaId, String title, String description, String mediaType, int releaseYear, List<String> genres, int ageRestriction, int creatorUserId){
         this.mediaId = mediaId;
         this.title = title;
         this.description = description;
@@ -20,6 +21,7 @@ public abstract class Media {
         this.releaseYear = releaseYear;
         this.genres = genres;
         this.ageRestriction = ageRestriction;
+        this.creatorUserId = creatorUserId;
     }
 
 
@@ -39,6 +41,9 @@ public abstract class Media {
 
     public int getAgeRestriction(){ return ageRestriction; }
 
+    public int getCreatorUserId() {
+        return creatorUserId;
+    }
 
     //setters
 

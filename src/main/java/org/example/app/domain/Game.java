@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Game extends Media{
 
-    public Game(int mediaId, String title, String description, int releaseYear, List<String> genres, int ageRestriction) {
-        super(mediaId, title, description, "Game", releaseYear, genres, ageRestriction);
+    public Game(int mediaId, String title, String description, int releaseYear, List<String> genres, int ageRestriction, int creatorUserId) {
+        super(mediaId, title, description, "Game", releaseYear, genres, ageRestriction, creatorUserId);
     }
 }
