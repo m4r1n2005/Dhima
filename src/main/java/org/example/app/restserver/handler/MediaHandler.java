@@ -146,7 +146,7 @@ public class MediaHandler implements HttpHandler {
 
                 switch (mediaRequest.getMediaType()) {
 
-                    case "Movie":
+                    case "Movie", "movie":
                         media = new Movie(
                                 0,
                                 mediaRequest.getTitle(),
@@ -158,7 +158,7 @@ public class MediaHandler implements HttpHandler {
                         );
                         break;
 
-                    case "Serie":
+                    case "Serie", "serie":
                         media = new Serie(
                                 0,
                                 mediaRequest.getTitle(),
@@ -170,7 +170,7 @@ public class MediaHandler implements HttpHandler {
                         );
                         break;
 
-                    case "Game":
+                    case "Game", "game":
                         media = new Game(
                                 0,
                                 mediaRequest.getTitle(),
