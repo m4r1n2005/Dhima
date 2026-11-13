@@ -62,7 +62,7 @@ docker cp .\database.sql mrp-postgres:/database.sql
 docker exec mrp-postgres psql -U postgres -d mrp -f /database.sql
 ```
 
-These commands assume the container was named `mrp-postgres`. If you have an existing container with a different name, replace `mrp-postgres` with that name. The SQL script creates the `users` and `media` tables if they do not already exist; it does not delete existing records.
+These commands assume the container was named `mrp-postgres`. If you have an existing container with a different name, replace `mrp-postgres` with that name. The SQL script creates all eight database tables in a new, empty `mrp` database. Because it uses `CREATE TABLE` without `IF NOT EXISTS`, it should not be executed again when those tables already exist. The script contains no data-deletion commands.
 
 For subsequent runs of a stopped container created with the command above:
 
