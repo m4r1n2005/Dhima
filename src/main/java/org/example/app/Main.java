@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 
 public class Main{
@@ -24,6 +25,7 @@ public class Main{
         ApplicationConfig appConfig = new ApplicationConfig();
         Server server = new Server(appConfig, 5000);
         server.start();
+
     }
 
 }
