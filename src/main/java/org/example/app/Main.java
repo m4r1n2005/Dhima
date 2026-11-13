@@ -23,7 +23,7 @@ public class Main{
     public static void main(String[] args) throws IOException {
 
         ApplicationConfig appConfig = new ApplicationConfig();
-        Server server = new Server(appConfig, 5000);
+        Server server = new Server(appConfig, 8080);
         server.start();
 
     }
