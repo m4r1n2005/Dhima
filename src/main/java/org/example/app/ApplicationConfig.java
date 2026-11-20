@@ -60,7 +60,7 @@ public class ApplicationConfig {
         // Services
         authService = AuthServiceImpl.getInstance();
 
-        userService = UserServiceImpl.getInstance(userRepository, mediaRepository, ratingRepository, authService);
+        userService = UserServiceImpl.getInstance(userRepository, authService);
 
 
         mediaService = MediaServiceImpl.getInstance(mediaRepository, favoritesRepository);
@@ -81,7 +81,7 @@ public class ApplicationConfig {
 
         //Controllers
 
-        userController = UserControllerImpl.getInstance(userService, ratingService);
+        userController = UserControllerImpl.getInstance(userService, ratingService, recommendationService);
 
 
         mediaController = MediaControllerImpl.getInstance(mediaService);

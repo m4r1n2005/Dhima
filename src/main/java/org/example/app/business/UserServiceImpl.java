@@ -9,15 +9,9 @@ import java.util.*;
 
 
 public class UserServiceImpl implements UserService{
-    private final List<User> loggedInUsers;
 
     private final UserRepository userRepository;
 
-
-    private final MediaRepository mediaRepository;
-
-
-    private final RatingRepository ratingRepository;
 
 
     private final AuthService authService;
@@ -26,17 +20,14 @@ public class UserServiceImpl implements UserService{
 
     private static UserService instance;
 
-    private UserServiceImpl(UserRepository userRepository, MediaRepository mediaRepository, RatingRepository ratingRepository, AuthService authService){
-        loggedInUsers = new ArrayList<>();
+    private UserServiceImpl(UserRepository userRepository, AuthService authService){
         this.userRepository = userRepository;
-        this.mediaRepository = mediaRepository;
-        this.ratingRepository = ratingRepository;
         this.authService = authService;
     }
 
-    public static UserService getInstance(UserRepository userRepository, MediaRepository mediaRepository, RatingRepository ratingRepository, AuthService authService){
+    public static UserService getInstance(UserRepository userRepository, AuthService authService){
         if(instance == null){
-            instance = new UserServiceImpl(userRepository, mediaRepository, ratingRepository, authService);
+            instance = new UserServiceImpl(userRepository, authService);
         }
 
         return instance;
