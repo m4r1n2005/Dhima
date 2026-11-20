@@ -56,26 +56,24 @@ public class MediaRepositoryImpl implements MediaRepository{
             sqlGenres.free();
         }
 
-        return switch (mediaType) {
-            case "Movie" -> new Movie(
-                    mediaId, title, description, releaseYear,
-                    genres, ageRestriction, creatorUserId
-            );
 
-            case "Serie" -> new Serie(
-                    mediaId, title, description, releaseYear,
-                    genres, ageRestriction, creatorUserId
+        try {
+            return MediaFactory.create(
+                    mediaType,
+                    mediaId,
+                    title,
+                    description,
+                    releaseYear,
+                    genres,
+                    ageRestriction,
+                    creatorUserId
             );
+        } catch (IllegalArgumentException e) {
+            throw new DataAccessException(
+                    "Unknown media type: " + mediaType, e
+            );
+        }
 
-            case "Game" -> new Game(
-                    mediaId, title, description, releaseYear,
-                    genres, ageRestriction, creatorUserId
-            );
-
-            default -> throw new DataAccessException(
-                    "Unknown media type: " + mediaType
-            );
-        };
     }
 
 

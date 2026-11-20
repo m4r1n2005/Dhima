@@ -142,53 +142,29 @@ public class MediaHandler implements HttpHandler {
                         request.getBody(), MediaRequest.class
                 );
 
-                Media media = null;
 
-                switch (mediaRequest.getMediaType()) {
+                Media media;
 
-                    case "Movie", "movie":
-                        media = new Movie(
-                                0,
-                                mediaRequest.getTitle(),
-                                mediaRequest.getDescription(),
-                                mediaRequest.getReleaseYear(),
-                                mediaRequest.getGenres(),
-                                mediaRequest.getAgeRestriction(),
-                                userId
-                        );
-                        break;
-
-                    case "Serie", "serie":
-                        media = new Serie(
-                                0,
-                                mediaRequest.getTitle(),
-                                mediaRequest.getDescription(),
-                                mediaRequest.getReleaseYear(),
-                                mediaRequest.getGenres(),
-                                mediaRequest.getAgeRestriction(),
-                                userId
-                        );
-                        break;
-
-                    case "Game", "game":
-                        media = new Game(
-                                0,
-                                mediaRequest.getTitle(),
-                                mediaRequest.getDescription(),
-                                mediaRequest.getReleaseYear(),
-                                mediaRequest.getGenres(),
-                                mediaRequest.getAgeRestriction(),
-                                userId
-                        );
-                        break;
-                }
-
-                if (media == null) {
-                    new Response(HttpStatus.BAD_REQUEST, ContentType.JSON,
-                            "{\"error\":\"Invalid media type\"}")
-                            .send(exchange);
+                try {
+                    media = MediaFactory.create(
+                            mediaRequest.getMediaType(),
+                            0,
+                            mediaRequest.getTitle(),
+                            mediaRequest.getDescription(),
+                            mediaRequest.getReleaseYear(),
+                            mediaRequest.getGenres(),
+                            mediaRequest.getAgeRestriction(),
+                            userId
+                    );
+                } catch (IllegalArgumentException e) {
+                    new Response(
+                            HttpStatus.BAD_REQUEST,
+                            ContentType.JSON,
+                            "{\"error\":\"Invalid media type\"}"
+                    ).send(exchange);
                     break;
                 }
+
 
                 boolean created = mediaController.createMedia(media);
 

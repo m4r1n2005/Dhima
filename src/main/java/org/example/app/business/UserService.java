@@ -15,7 +15,4 @@ public interface UserService {
     boolean updateProfile(User user);
 
 
-    List<Media> getRecommendations(int userId, String type);
-
-
 }

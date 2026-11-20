@@ -108,26 +108,4 @@ public class UserServiceImpl implements UserService{
         return false;
     }
 
-
-
-    @Override
-    public List<Media> getRecommendations(int userId, String type){
-        if(type.equals("genre")){
-            String favoriteGenre = userRepository.findById(userId).getFavoriteGenre();
-
-            return mediaRepository.findAll().stream().filter(media -> media.getGenres().contains(favoriteGenre)).toList();
-        } else if(type.equals("content")){
-
-
-            return ratingRepository.findByUserId(userId).stream().filter(rating -> rating.getStars() > 3).map(rating -> mediaRepository.findById(rating.getMediaId())).toList();
-        }
-
-
-        return null;
-    }
-
-
-
-
-
 }

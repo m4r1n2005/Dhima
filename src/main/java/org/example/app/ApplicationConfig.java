@@ -25,6 +25,7 @@ public class ApplicationConfig {
     private final MediaService mediaService;
     private final RatingService ratingService;
     private final FavoritesService favoritesService;
+    private final RecommendationService recommendationService;
     //private final LeaderboardService leaderboardService;
 
     // Controllers
@@ -69,6 +70,13 @@ public class ApplicationConfig {
 
 
         favoritesService = FavoritesServiceImpl.getInstance(favoritesRepository, mediaRepository);
+
+
+        recommendationService = RecommendationServiceImpl.getInstance(userRepository, mediaRepository, ratingRepository
+        );
+
+
+
 
 
         //Controllers
