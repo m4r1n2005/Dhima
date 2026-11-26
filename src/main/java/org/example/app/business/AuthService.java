@@ -1,12 +1,6 @@
 package org.example.app.business;
 
-public interface AuthService {
+public interface AuthService extends TokenGenerator,
+        TokenValidator, TokenRevoker {
 
-    String generateToken(int userId);
-
-
-    Integer validateToken(String token);
-
-
-    void revokeToken(String token);
 }

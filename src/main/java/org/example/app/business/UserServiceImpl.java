@@ -11,20 +11,27 @@ public class UserServiceImpl implements UserService{
 
 
 
-    private final AuthService authService;
+    private final TokenGenerator authService;
 
 
 
     private static UserService instance;
 
-    private UserServiceImpl(UserRepository userRepository, AuthService authService){
+    private UserServiceImpl(
+            UserRepository userRepository,
+            TokenGenerator authService) {
+
         this.userRepository = userRepository;
         this.authService = authService;
     }
 
-    public static UserService getInstance(UserRepository userRepository, AuthService authService){
-        if(instance == null){
-            instance = new UserServiceImpl(userRepository, authService);
+    public static UserService getInstance(
+            UserRepository userRepository,
+            TokenGenerator authService) {
+
+        if (instance == null) {
+            instance = new UserServiceImpl(
+                    userRepository, authService);
         }
 
         return instance;

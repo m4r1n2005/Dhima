@@ -1,6 +1,6 @@
 package org.example.app.business;
 
-import org.example.app.data.FavoritesRepository;
+import org.example.app.data.FavoritesCleanup;
 import org.example.app.data.MediaRepository;
 import org.example.app.domain.Media;
 import org.example.app.domain.MediaNotFoundException;
@@ -12,18 +12,25 @@ public class MediaServiceImpl implements MediaService{
 
     private final MediaRepository mediaRepository;
 
-    private final FavoritesRepository favoritesRepository;
+    private final FavoritesCleanup favoritesRepository;
 
     private static MediaService instance;
 
-    private MediaServiceImpl(MediaRepository mediaRepository, FavoritesRepository favoritesRepository){
+    private MediaServiceImpl(
+            MediaRepository mediaRepository,
+            FavoritesCleanup favoritesRepository) {
+
         this.mediaRepository = mediaRepository;
         this.favoritesRepository = favoritesRepository;
     }
 
-    public static MediaService getInstance(MediaRepository mediaRepository, FavoritesRepository favoritesRepository){
+    public static MediaService getInstance(
+            MediaRepository mediaRepository,
+            FavoritesCleanup favoritesRepository) {
+
         if(instance == null){
-            instance = new MediaServiceImpl(mediaRepository, favoritesRepository);
+            instance = new MediaServiceImpl(
+                    mediaRepository, favoritesRepository);
         }
 
         return instance;

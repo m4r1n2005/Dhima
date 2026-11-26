@@ -3,9 +3,8 @@ package org.example.app.restserver.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import org.example.app.business.AuthService;
+import org.example.app.business.TokenValidator;
 import org.example.app.domain.*;
-import org.example.app.presentation.FavoritesController;
 import org.example.app.presentation.UserController;
 
 import org.example.app.presentation.dto.LoginRequest;
@@ -26,20 +25,24 @@ public class UserHandler implements HttpHandler {
 
 
 
-    private final AuthService authService;
+    private final TokenValidator authService;
 
 
     private static HttpHandler instance;
 
 
-    private UserHandler(UserController userController, AuthService authService) {
+    private UserHandler(UserController userController,
+                        TokenValidator authService) {
         this.userController = userController;
         this.authService = authService;
     }
 
 
-    public static HttpHandler getInstance(UserController userController, AuthService authService){
-        if(instance == null){
+    public static HttpHandler getInstance(
+            UserController userController,
+            TokenValidator authService) {
+
+        if (instance == null) {
             instance = new UserHandler(userController, authService);
         }
 

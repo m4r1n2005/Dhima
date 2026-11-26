@@ -1,24 +1,24 @@
 package org.example.app.business;
 
-import org.example.app.data.MediaRepository;
-import org.example.app.data.RatingRepository;
-import org.example.app.data.UserRepository;
+import org.example.app.data.MediaReader;
+import org.example.app.data.RatingReader;
+import org.example.app.data.UserReader;
 import org.example.app.domain.Media;
 
 import java.util.List;
 
 public class RecommendationServiceImpl implements RecommendationService {
 
-    private final UserRepository userRepository;
-    private final MediaRepository mediaRepository;
-    private final RatingRepository ratingRepository;
+    private final UserReader userRepository;
+    private final MediaReader mediaRepository;
+    private final RatingReader ratingRepository;
 
     private static RecommendationService instance;
 
     private RecommendationServiceImpl(
-            UserRepository userRepository,
-            MediaRepository mediaRepository,
-            RatingRepository ratingRepository) {
+            UserReader userRepository,
+            MediaReader mediaRepository,
+            RatingReader ratingRepository) {
 
         this.userRepository = userRepository;
         this.mediaRepository = mediaRepository;
@@ -26,9 +26,9 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
     public static RecommendationService getInstance(
-            UserRepository userRepository,
-            MediaRepository mediaRepository,
-            RatingRepository ratingRepository) {
+            UserReader userRepository,
+            MediaReader mediaRepository,
+            RatingReader ratingRepository) {
 
         if (instance == null) {
             instance = new RecommendationServiceImpl(

@@ -69,7 +69,10 @@ public class ApplicationConfig {
         ratingService = RatingServiceImpl.getInstance(ratingRepository);
 
 
-        favoritesService = FavoritesServiceImpl.getInstance(favoritesRepository, mediaRepository);
+        favoritesService = FavoritesServiceImpl.getInstance(
+                favoritesRepository,
+                favoritesRepository,
+                mediaRepository);
 
 
         recommendationService = RecommendationServiceImpl.getInstance(userRepository, mediaRepository, ratingRepository

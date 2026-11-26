@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-import org.example.app.business.AuthService;
+import org.example.app.business.TokenValidator;
 import org.example.app.domain.*;
 import org.example.app.presentation.MediaController;
 import org.example.app.presentation.dto.MediaRequest;
@@ -20,18 +20,20 @@ import java.util.List;
 public class MediaHandler implements HttpHandler {
 
     private final MediaController mediaController;
-    private final AuthService authService;
+    private final TokenValidator authService;
 
     private static HttpHandler instance;
 
     private MediaHandler(MediaController mediaController,
-                         AuthService authService) {
+                         TokenValidator authService) {
         this.mediaController = mediaController;
         this.authService = authService;
     }
 
-    public static HttpHandler getInstance(MediaController mediaController,
-                                          AuthService authService) {
+    public static HttpHandler getInstance(
+            MediaController mediaController,
+            TokenValidator authService) {
+
         if (instance == null) {
             instance = new MediaHandler(mediaController, authService);
         }
