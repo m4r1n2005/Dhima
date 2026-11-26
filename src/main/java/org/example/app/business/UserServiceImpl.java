@@ -1,7 +1,4 @@
 package org.example.app.business;
-
-import org.example.app.data.MediaRepository;
-import org.example.app.data.RatingRepository;
 import org.example.app.data.UserRepository;
 import org.example.app.domain.*;
 
